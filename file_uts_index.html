@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulator UTS Data Warehouse - FST Unipdu Jombang</title>
+  <style>
+    :root {
+      --primary: #2b6cb0;
+      --primary-dark: #1a365d;
+      --accent: #00bcd4;
+      --bg: #f7fafc;
+      --card: #ffffff;
+      --border: #cbd5e0;
+      --text: #2d3748;
+      --muted: #4a5568;
+      --danger: #e53e3e;
+      --success: #2f855a;
+      --warning: #dd6b20;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header-banner {
+      background: #ebf8ff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 24px;
+      margin-bottom: 18px;
+    }
+    .badge-top {
+      background: #c53030;
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .header-banner h1 {
+      color: var(--primary);
+      margin: 10px 0 4px;
+      font-size: 24px;
+    }
+    .header-banner p {
+      margin: 0;
+      font-size: 15px;
+      color: var(--muted);
+    }
+    .config-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 6px solid var(--primary);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 4px;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+    }
+    .tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      border: 1px solid transparent;
+      border-bottom: none;
+      background: #edf2f7;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--card);
+      color: var(--primary);
+      border-color: var(--border);
+      border-top: 3px solid var(--primary);
+    }
+    .tab-panel {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0 8px 8px 8px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .tab-panel.active { display: block; }
+    .btn {
+      padding: 9px 16px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-warning { background: var(--warning); color: #fff; }
+    .btn-secondary { background: #718096; color: #fff; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status-log {
+      background: #1a202c;
+      color: #a0aec0;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-top: 14px;
+      max-height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #edf2f7; color: var(--primary-dark); }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .pill-pass { background: #c6f6d5; color: #22543d; }
+    .pill-fail { background: #fed7d7; color: #742a2a; }
+    .pill-warn { background: #feebc8; color: #7b341e; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+    .ceo-box {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 14px;
+      background: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header-banner">
+    <span class="badge-top">Simulator Praktikum &amp; UTS &bull; Cloud Firestore</span>
+    <h1>Data Quality, Automated Testing, CI/CD, Observability &amp; Data Catalog</h1>
+    <p>Studi Kasus: Integrasi Pembayaran SIAKAD &amp; Koperasi Mahasiswa Unipdu Jombang &bull; Dosen: Nufan Balafif, S.Kom., MM.</p>
+  </div>
+
+  <!-- KONFIGURASI FIREBASE -->
+  <div class="config-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+      <strong style="color:var(--primary); font-size:16px;">Konfigurasi Koneksi Cloud Firestore</strong>
+      <span id="connIndicator" class="pill pill-warn">Belum Diuji</span>
+    </div>
+    <div class="config-grid">
+      <div>
+        <label>Firebase Project ID</label>
+        <input type="text" id="cfgProjectId" placeholder="mis. dw-unipdu-4122051">
+      </div>
+      <div>
+        <label>Web API Key</label>
+        <input type="text" id="cfgApiKey" placeholder="AIzaSy...">
+      </div>
+      <div>
+        <label>Koleksi Staging</label>
+        <input type="text" id="cfgStaging" value="stg_orders">
+      </div>
+      <div>
+        <label>Koleksi Dimensi</label>
+        <input type="text" id="cfgDim" value="dim_customers">
+      </div>
+      <div>
+        <label>Koleksi Gold / Marts</label>
+        <input type="text" id="cfgMarts" value="fct_orders">
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVIGASI TAB -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('setup', this)">1. Setup Data</button>
+    <button class="tab-btn" onclick="switchTab('tests', this)">2. Automated Tests</button>
+    <button class="tab-btn" onclick="switchTab('cicd', this)">3. Gerbang CI/CD</button>
+    <button class="tab-btn" onclick="switchTab('obs', this)">4. Observability (5 Pilar)</button>
+    <button class="tab-btn" onclick="switchTab('catalog', this)">5. Katalog Data</button>
+  </div>
+
+  <!-- TAB 1: SETUP -->
+  <div id="tab-setup" class="tab-panel active">
+    <h3 style="margin-top:0; color:var(--primary);">Pembangkitan Data Transaksi di Cloud Firestore</h3>
+    <p>Klik salah satu skenario di bawah ini untuk menulis dokumen langsung ke koleksi <code id="lblStg">stg_orders</code> dan <code>dim_customers</code> di proyek Firebase Anda.</p>
+    <div>
+      <button class="btn btn-success" onclick="seedFirestore('clean')">Bangkitkan Data Bersih (100 Order + 30 Customer)</button>
+      <button class="btn btn-danger" onclick="seedFirestore('corrupt')">Bangkitkan Data Cacat (Silent Corruption)</button>
+      <button class="btn btn-warning" onclick="seedFirestore('stale')">Bangkitkan Data Basi (&gt;30 Jam)</button>
+    </div>
+    <div style="background:#ebf8ff; border-left:4px solid var(--primary); padding:10px 14px; margin-top:12px; font-size:13.5px;">
+      <strong>Petunjuk Khusus UTS (Tahap 1):</strong> Setelah mengklik <strong>Data Cacat</strong>, buka Firebase Console &rarr; koleksi <code>stg_orders</code> &rarr; tambahkan 1 dokumen manual dengan <code>order_id: "ORD-NIM"</code>, <code>customer_id: "C999"</code>, <code>amount: 250000</code>, <code>discount: 300000</code>, dan <code>status: "REFUND"</code> sebelum beralih ke tab <strong>Automated Tests</strong>.
+    </div>
+    <div id="setupLog" class="status-log">Siap menghubungkan ke Cloud Firestore...</div>
+  </div>
+
+  <!-- TAB 2: AUTOMATED TESTS -->
+  <div id="tab-tests" class="tab-panel">
+    <h3 style="margin-top:0; color:var(--primary);">Automated Data Quality Testing (Generic, Singular &amp; Custom JS)</h3>
+    <div class="grid-2">
+      <div>
+        <label>Konfigurasi JSON (Generic &amp; Statistical Tests)</label>
+        <textarea id="jsonTestConfig" rows="8">{
+  "accepted_values": ["PAID", "SHIPPED", "COMPLETED", "PENDING"],
+  "range_min": 10000,
+  "range_max": 50000000,
+  "zscore_threshold": 3.0
+}</textarea>
+      </div>
+      <div>
+        <label>Kotak Test Kustom (Ekspresi JavaScript &bull; variabel <code>rows</code> berisi array dokumen <code>stg_orders</code>)</label>
+        <textarea id="customJsInput" rows="8" placeholder="Contoh UTS: rows.filter(r => !r.customer_id || r.customer_id === 'C999' || Number(r.discount) > Number(r.amount))">rows.filter(r => !r.customer_id || r.customer_id === 'C999' || Number(r.discount) > Number(r.amount))</textarea>
+      </div>
+    </div>
+    <div style="margin-top:12px;">
+      <button class="btn btn-primary" onclick="runAllTests()">Jalankan Semua Test di Firestore</button>
+    </div>
+    <div id="testSummaryBanner" style="margin-top:12px;"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>Nama Pengujian</th>
+          <th>Kategori</th>
+          <th>Kolom / Target</th>
+          <th>Status</th>
+          <th>Jumlah Pelanggar</th>
+          <th>Sampel ID Pelanggar (<code>order_id</code>)</th>
+        </tr>
+      </thead>
+      <tbody id="testResultBody">
+        <tr><td colspan="6" style="text-align:center; color:var(--muted);">Belum ada pengujian yang dijalankan.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TAB 3: CI/CD -->
+  <div id="tab-cicd" class="tab-panel">
+    <h3 style="margin-top:0; color:var(--primary);">Gerbang CI/CD Zero-Defect &amp; Proteksi Circuit Breaker</h3>
+    <p>Simulasikan pembuatan <em>Pull Request</em> (PR). Pipeline akan menyalin data ke sandbox <code>analytics_pr_XXX</code>, menjalankan seluruh test, lalu memutuskan apakah data layak dipromosikan ke <code>fct_orders</code> atau diblokir.</p>
+    <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+      <div style="width:200px;">
+        <label>Nomor Pull Request (PR)</label>
+        <input type="text" id="prNumberInput" value="124" placeholder="3 digit NIM">
+      </div>
+      <button class="btn btn-primary" onclick="runCicdPipeline()">Jalankan Pipeline PR</button>
+      <button class="btn btn-secondary" onclick="checkCeoDashboard()">Cek Dashboard CEO / Rektorat</button>
+    </div>
+    <div id="cicdLog" class="status-log">Menunggu eksekusi pipeline PR...</div>
+    <div id="ceoDashboardBox" class="ceo-box" style="display:none;"></div>
+  </div>
+
+  <!-- TAB 4: OBSERVABILITY -->
+  <div id="tab-obs" class="tab-panel">
+    <h3 style="margin-top:0; color:var(--primary);">5 Pilar Data Observability (Koleksi <code>_obs_runs</code>)</h3>
+    <p>Jalankan snapshot secara berurutan pada skenario: (1) <strong>Data Bersih</strong>, (2) <strong>Data Basi</strong>, dan (3) <strong>Data Cacat</strong>. Setiap eksekusi akan menyimpan dokumen riwayat ke koleksi <code>_obs_runs</code> di Firestore.</p>
+    <button class="btn btn-primary" onclick="runObservabilitySnapshot()">Jalankan Snapshot Observability</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Pilar Observability</th>
+          <th>Metrik yang Dipantau</th>
+          <th>Nilai Saat Ini</th>
+          <th>Status</th>
+          <th>Keterangan / Dampak</th>
+        </tr>
+      </thead>
+      <tbody id="obsResultBody">
+        <tr><td colspan="5" style="text-align:center; color:var(--muted);">Klik "Jalankan Snapshot Observability" untuk memindai koleksi Firestore.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TAB 5: DATA CATALOG -->
+  <div id="tab-catalog" class="tab-panel">
+    <h3 style="margin-top:0; color:var(--primary);">Katalog Data Otomatis &amp; Lencana Mutu (Koleksi <code>_catalog</code>)</h3>
+    <p>Pastikan Anda sudah menjalankan tab <strong>Automated Tests</strong> terlebih dahulu agar lencana mutu terisi, lalu klik tombol di bawah untuk membangkitkan dokumentasi skema dan menyimpannya ke koleksi <code>_catalog</code>.</p>
+    <button class="btn btn-primary" onclick="generateDataCatalog()">Bangkitkan Katalog Data</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Koleksi</th>
+          <th>Nama Kolom</th>
+          <th>Tipe Data</th>
+          <th>Deskripsi Bisnis (SIAKAD &amp; Koperasi)</th>
+          <th>Test Terpasang</th>
+          <th>Lencana Mutu</th>
+        </tr>
+      </thead>
+      <tbody id="catalogResultBody">
+        <tr><td colspan="6" style="text-align:center; color:var(--muted);">Belum ada katalog yang dibangkitkan.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // State global untuk menyimpan hasil test terakhir & baseline observability
+  let lastTestResults = null;
+  let baselineObs = null;
+
+  // Muat konfigurasi dari localStorage
+  window.addEventListener('DOMContentLoaded', () => {
+    ['cfgProjectId', 'cfgApiKey', 'cfgStaging', 'cfgDim', 'cfgMarts'].forEach(id => {
+      const saved = localStorage.getItem(id);
+      if (saved) document.getElementById(id).value = saved;
+      document.getElementById(id).addEventListener('input', e => {
+        localStorage.setItem(id, e.target.value.trim());
+      });
+    });
+  });
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function getCfg() {
+    const projectId = document.getElementById('cfgProjectId').value.trim();
+    const apiKey = document.getElementById('cfgApiKey').value.trim();
+    const stg = document.getElementById('cfgStaging').value.trim() || 'stg_orders';
+    const dim = document.getElementById('cfgDim').value.trim() || 'dim_customers';
+    const marts = document.getElementById('cfgMarts').value.trim() || 'fct_orders';
+    if (!projectId || !apiKey) {
+      alert('Mohon isi Firebase Project ID dan Web API Key terlebih dahulu!');
+      throw new Error('Konfigurasi Firebase belum lengkap.');
+    }
+    return { projectId, apiKey, stg, dim, marts };
+  }
+
+  // Konversi JS Object <-> Firestore REST Value
+  function toFirestoreFields(obj) {
+    const fields = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (v === null || v === undefined) {
+        fields[k] = { nullValue: null };
+      } else if (typeof v === 'number') {
+        if (Number.isInteger(v)) fields[k] = { integerValue: String(v) };
+        else fields[k] = { doubleValue: v };
+      } else if (typeof v === 'boolean') {
+        fields[k] = { booleanValue: v };
+      } else {
+        fields[k] = { stringValue: String(v) };
+      }
+    }
+    return { fields };
+  }
+
+  function fromFirestoreDoc(doc) {
+    const out = { _docId: doc.name.split('/').pop() };
+    if (!doc.fields) return out;
+    for (const [k, valObj] of Object.entries(doc.fields)) {
+      if ('stringValue' in valObj) out[k] = valObj.stringValue;
+      else if ('integerValue' in valObj) out[k] = Number(valObj.integerValue);
+      else if ('doubleValue' in valObj) out[k] = Number(valObj.doubleValue);
+      else if ('booleanValue' in valObj) out[k] = Boolean(valObj.booleanValue);
+      else if ('nullValue' in valObj) out[k] = null;
+    }
+    return out;
+  }
+
+  // Fungsi utilitas Firestore REST API (Batch Write & List Documents)
+  async function firestoreBatchWrite(projectId, apiKey, writes) {
+    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:commit?key=${apiKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ writes })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error ? err.error.message : res.statusText);
+    }
+    document.getElementById('connIndicator').className = 'pill pill-pass';
+    document.getElementById('connIndicator').textContent = 'Terhubung ke ' + projectId;
+    return res.json();
+  }
+
+  async function firestoreListDocs(projectId, apiKey, collection) {
+    const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/${collection}?pageSize=300&key=${apiKey}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error ? err.error.message : res.statusText);
+    }
+    const data = await res.json();
+    document.getElementById('connIndicator').className = 'pill pill-pass';
+    document.getElementById('connIndicator').textContent = 'Terhubung ke ' + projectId;
+    return (data.documents || []).map(fromFirestoreDoc);
+  }
+
+  async function clearCollection(projectId, apiKey, collection) {
+    const docs = await firestoreListDocs(projectId, apiKey, collection);
+    if (docs.length === 0) return;
+    const writes = docs.map(d => ({
+      delete: `projects/${projectId}/databases/(default)/documents/${collection}/${d._docId}`
+    }));
+    await firestoreBatchWrite(projectId, apiKey, writes);
+  }
+
+  // TAB 1: SEED DATA
+  async function seedFirestore(mode) {
+    const logEl = document.getElementById('setupLog');
+    try {
+      const { projectId, apiKey, stg, dim } = getCfg();
+      logEl.textContent = `[1/3] Membersihkan koleksi ${stg} dan menyiapkan ${dim}...`;
+
+      // Pastikan dim_customers (30 pelanggan C001 - C030) tertulis
+      const dimWrites = [];
+      for (let i = 1; i <= 30; i++) {
+        const cid = 'C' + String(i).padStart(3, '0');
+        dimWrites.push({
+          update: {
+            name: `projects/${projectId}/databases/(default)/documents/${dim}/${cid}`,
+            ...toFirestoreFields({
+              customer_id: cid,
+              customer_name: `Mahasiswa / Unit #${i}`,
+              faculty: i % 2 === 0 ? 'FST' : 'FIAI',
+              active: true
+            })
+          }
+        });
+      }
+      await firestoreBatchWrite(projectId, apiKey, dimWrites);
+      await clearCollection(projectId, apiKey, stg);
+
+      logEl.textContent += `\n[2/3] Membangkitkan dokumen untuk skenario: ${mode.toUpperCase()}...`;
+      const now = new Date();
+      const timestampIso = mode === 'stale'
+        ? new Date(now.getTime() - 36 * 3600 * 1000).toISOString() // 36 jam lalu (>30 jam)
+        : new Date(now.getTime() - 1 * 3600 * 1000).toISOString(); // 1 jam lalu
+
+      const statuses = ['PAID', 'SHIPPED', 'COMPLETED', 'PENDING'];
+      const orders = [];
+
+      // Buat 90 pesanan dasar yang valid
+      const baseCount = mode === 'corrupt' ? 83 : 100;
+      for (let i = 1; i <= baseCount; i++) {
+        const oid = 'ORD-' + String(1000 + i);
+        const cid = 'C' + String(((i - 1) % 30) + 1).padStart(3, '0');
+        const amount = (Math.floor(Math.random() * 45) + 5) * 10000; // 50rb - 500rb
+        const discount = Math.floor(amount * 0.05);
+        orders.push({
+          docId: `doc_${i}`,
+          data: {
+            order_id: oid,
+            customer_id: cid,
+            amount: amount,
+            discount: discount,
+            status: statuses[i % statuses.length],
+            created_at: timestampIso
+          }
+        });
+      }
+
+      if (mode === 'corrupt') {
+        // 1) 5 pesanan ganda (total 10 baris memiliki order_id yang berulang)
+        for (let d = 1; d <= 5; d++) {
+          orders.push({
+            docId: `dup_${d}`,
+            data: { ...orders[d - 1].data }
+          });
+        }
+        // 2) 4 customer_id NULL
+        for (let n = 1; n <= 4; n++) {
+          orders.push({
+            docId: `null_cust_${n}`,
+            data: {
+              order_id: `ORD-NULL-${n}`,
+              customer_id: null,
+              amount: 120000,
+              discount: 10000,
+              status: 'PAID',
+              created_at: timestampIso
+            }
+          });
+        }
+        // 3) 3 FK yatim (C999)
+        for (let o = 1; o <= 3; o++) {
+          orders.push({
+            docId: `orphan_${o}`,
+            data: {
+              order_id: `ORD-ORPHAN-${o}`,
+              customer_id: 'C999',
+              amount: 175000,
+              discount: 0,
+              status: 'PAID',
+              created_at: timestampIso
+            }
+          });
+        }
+        // 4) 3 status REFUND
+        for (let r = 1; r <= 3; r++) {
+          orders.push({
+            docId: `refund_${r}`,
+            data: {
+              order_id: `ORD-REF-${r}`,
+              customer_id: 'C005',
+              amount: 210000,
+              discount: 0,
+              status: 'REFUND',
+              created_at: timestampIso
+            }
+          });
+        }
+        // 5) 2 diskon melebihi total (discount > amount)
+        for (let dc = 1; dc <= 2; dc++) {
+          orders.push({
+            docId: `bad_disc_${dc}`,
+            data: {
+              order_id: `ORD-DISC-${dc}`,
+              customer_id: 'C010',
+              amount: 100000,
+              discount: 150000,
+              status: 'PAID',
+              created_at: timestampIso
+            }
+          });
+        }
+        // 6) 2 nominal pencilan 99.999.999 + kolom liar harga_total
+        for (let out = 1; out <= 2; out++) {
+          orders.push({
+            docId: `outlier_${out}`,
+            data: {
+              order_id: `ORD-OUT-${out}`,
+              customer_id: 'C012',
+              amount: 99999999,
+              discount: 0,
+              status: 'PAID',
+              harga_total: 99999999,
+              created_at: timestampIso
+            }
+          });
+        }
+      }
+
+      const stgWrites = orders.map(item => ({
+        update: {
+          name: `projects/${projectId}/databases/(default)/documents/${stg}/${item.docId}`,
+          ...toFirestoreFields(item.data)
+        }
+      }));
+
+      await firestoreBatchWrite(projectId, apiKey, stgWrites);
+      logEl.textContent += `\n[3/3] SUKSES (Status Pipeline: HIJAU). Sebanyak ${orders.length} dokumen berhasil ditulis ke '${stg}' dan 30 dokumen ke '${dim}'.`;
+      if (mode === 'corrupt') {
+        logEl.textContent += `\n[INFO SILENT CORRUPTION] Seluruh dokumen cacat tersimpan tanpa error oleh Firestore! Silakan tambahkan dokumen manual 'ORD-NIM' di Firebase Console lalu jalankan tab Automated Tests.`;
+      }
+    } catch (err) {
+      logEl.textContent += `\n[ERROR] ${err.message}`;
+    }
+  }
+
+  // TAB 2: AUTOMATED TESTS
+  async function evaluateTests(rows, dimCustomers) {
+    let cfg = {
+      accepted_values: ["PAID", "SHIPPED", "COMPLETED", "PENDING"],
+      range_min: 10000,
+      range_max: 50000000,
+      zscore_threshold: 3.0
+    };
+    try {
+      cfg = { ...cfg, ...JSON.parse(document.getElementById('jsonTestConfig').value) };
+    } catch (e) {
+      alert('Format JSON Konfigurasi tidak valid! Menggunakan nilai default.');
+    }
+
+    const validCustomerIds = new Set(dimCustomers.map(c => c.customer_id));
+
+    // 1. unique(order_id)
+    const counts = {};
+    rows.forEach(r => { counts[r.order_id] = (counts[r.order_id] || 0) + 1; });
+    const dupRows = rows.filter(r => counts[r.order_id] > 1);
+
+    // 2. not_null(customer_id)
+    const nullCustRows = rows.filter(r => r.customer_id === null || r.customer_id === undefined || r.customer_id === '');
+
+    // 3. relationships(customer_id -> dim_customers)
+    const orphanRows = rows.filter(r => r.customer_id && !validCustomerIds.has(r.customer_id));
+
+    // 4. accepted_values(status)
+    const badStatusRows = rows.filter(r => !cfg.accepted_values.includes(r.status));
+
+    // 5. discount_lte_amount (Singular Test)
+    const badDiscountRows = rows.filter(r => Number(r.discount) > Number(r.amount));
+
+    // 6. range(amount)
+    const outOfRangeRows = rows.filter(r => Number(r.amount) < cfg.range_min || Number(r.amount) > cfg.range_max);
+
+    // 7. zscore(amount)
+    const amounts = rows.map(r => Number(r.amount) || 0);
+    const mean = amounts.reduce((a, b) => a + b, 0) / (amounts.length || 1);
+    const std = Math.sqrt(amounts.reduce((sq, n) => sq + Math.pow(n - mean, 2), 0) / (amounts.length || 1)) || 1;
+    const zscoreRows = rows.filter(r => Math.abs(((Number(r.amount) || 0) - mean) / std) > cfg.zscore_threshold);
+
+    // 8. Custom Test (JS Expression)
+    let customViolators = [];
+    const customCode = document.getElementById('customJsInput').value.trim();
+    if (customCode) {
+      try {
+        const fn = new Function('rows', `return (${customCode});`);
+        const res = fn(rows);
+        if (Array.isArray(res)) customViolators = res;
+      } catch (e) {
+        customViolators = [{ order_id: 'ERROR_SYNTAX_JS: ' + e.message }];
+      }
+    }
+
+    return [
+      { name: 'unique(order_id)', type: 'Generic', col: 'order_id', violators: dupRows },
+      { name: 'not_null(customer_id)', type: 'Generic', col: 'customer_id', violators: nullCustRows },
+      { name: 'relationships(customer_id)', type: 'Generic', col: 'customer_id', violators: orphanRows },
+      { name: 'accepted_values(status)', type: 'Generic', col: 'status', violators: badStatusRows },
+      { name: 'discount_lte_amount', type: 'Singular', col: 'discount, amount', violators: badDiscountRows },
+      { name: `range(amount: ${cfg.range_min}..${cfg.range_max})`, type: 'Generic', col: 'amount', violators: outOfRangeRows },
+      { name: `zscore_anomaly(|z| > ${cfg.zscore_threshold})`, type: 'Statistical', col: 'amount', violators: zscoreRows },
+      { name: 'custom_singular_test (JS)', type: 'Custom JS', col: 'multi-column', violators: customViolators }
+    ];
+  }
+
+  async function runAllTests() {
+    const tbody = document.getElementById('testResultBody');
+    const banner = document.getElementById('testSummaryBanner');
+    try {
+      const { projectId, apiKey, stg, dim } = getCfg();
+      tbody.innerHTML = `<tr><td colspan="6">Mengambil dokumen dari Cloud Firestore (${stg} & ${dim})...</td></tr>`;
+      const [rows, dimCustomers] = await Promise.all([
+        firestoreListDocs(projectId, apiKey, stg),
+        firestoreListDocs(projectId, apiKey, dim)
+      ]);
+
+      const results = await evaluateTests(rows, dimCustomers);
+      lastTestResults = results;
+
+      let totalFailedTests = 0;
+      tbody.innerHTML = results.map(r => {
+        const pass = r.violators.length === 0;
+        if (!pass) totalFailedTests++;
+        const sampleIds = r.violators.slice(0, 8).map(v => v.order_id || v._docId).join(', ');
+        return `
+          <tr>
+            <td><strong>${r.name}</strong></td>
+            <td>${r.type}</td>
+            <td><code>${r.col}</code></td>
+            <td><span class="pill ${pass ? 'pill-pass' : 'pill-fail'}">${pass ? 'PASS' : 'FAIL'}</span></td>
+            <td><strong>${r.violators.length}</strong> baris</td>
+            <td><code>${sampleIds || '-'}</code></td>
+          </tr>
+        `;
+      }).join('');
+
+      if (totalFailedTests === 0) {
+        banner.innerHTML = `<div style="background:#c6f6d5; border-left:5px solid #2f855a; padding:10px 14px; font-weight:600; color:#22543d;">SEMUA TEST LULUS (PASS) pada ${rows.length} dokumen di '${stg}'. Data siap dipromosikan melalui CI/CD!</div>`;
+      } else {
+        banner.innerHTML = `<div style="background:#fed7d7; border-left:5px solid #e53e3e; padding:10px 14px; font-weight:600; color:#742a2a;">TERDETEKSI ${totalFailedTests} PENGUJIAN GAGAL (FAIL) dari ${rows.length} dokumen di '${stg}'. Promosi ke lapisan Marts akan diblokir!</div>`;
+      }
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error: ${err.message}</td></tr>`;
+    }
+  }
+
+  // TAB 3: CI/CD PIPELINE
+  async function runCicdPipeline() {
+    const logEl = document.getElementById('cicdLog');
+    const prNum = document.getElementById('prNumberInput').value.trim() || '124';
+    const sandboxCol = `analytics_pr_${prNum}`;
+    try {
+      const { projectId, apiKey, stg, dim, marts } = getCfg();
+      logEl.textContent = `[CI/CD PR #${prNum}] Memulai pipeline Zero-Defect...\n[1/4] Membaca data dari '${stg}' dan membuat sandbox '${sandboxCol}'...`;
+
+      const [rows, dimCustomers] = await Promise.all([
+        firestoreListDocs(projectId, apiKey, stg),
+        firestoreListDocs(projectId, apiKey, dim)
+      ]);
+
+      // Tulis sampel ke sandbox
+      const sandboxWrites = rows.slice(0, 25).map((r, idx) => {
+        const cleanCopy = { ...r };
+        delete cleanCopy._docId;
+        return {
+          update: {
+            name: `projects/${projectId}/databases/(default)/documents/${sandboxCol}/sb_${idx + 1}`,
+            ...toFirestoreFields(cleanCopy)
+          }
+        };
+      });
+      if (sandboxWrites.length > 0) await firestoreBatchWrite(projectId, apiKey, sandboxWrites);
+
+      logEl.textContent += `\n[2/4] Menjalankan seluruh Automated Tests pada sandbox '${sandboxCol}'...`;
+      const results = await evaluateTests(rows, dimCustomers);
+      lastTestResults = results;
+      const failed = results.filter(r => r.violators.length > 0);
+
+      if (failed.length > 0) {
+        logEl.textContent += `\n[3/4] TEST GAGAL (${failed.length} test FAIL: ${failed.map(f => f.name).join(', ')}).`;
+        logEl.textContent += `\n[4/4] MERGE DIBLOKIR! Menghapus sandbox '${sandboxCol}' dan menulis status 'BLOCKED' ke '_pipeline/status'...`;
+        await clearCollection(projectId, apiKey, sandboxCol);
+        await firestoreBatchWrite(projectId, apiKey, [{
+          update: {
+            name: `projects/${projectId}/databases/(default)/documents/_pipeline/status`,
+            ...toFirestoreFields({
+              pr_number: prNum,
+              status: 'BLOCKED',
+              failed_tests: failed.length,
+              updated_at: new Date().toISOString(),
+              message: `PR #${prNum} diblokir karena ${failed.length} test gagal.`
+            })
+          }
+        }]);
+        logEl.textContent += `\n[HASIL AKHIR] PR #${prNum} -> BLOCKED (Circuit Breaker Aktif).`;
+      } else {
+        logEl.textContent += `\n[3/4] SEMUA TEST PASS! Mempromosikan ${rows.length} dokumen bersih ke koleksi Marts '${marts}'...`;
+        await clearCollection(projectId, apiKey, marts);
+        const martWrites = rows.map((r, idx) => {
+          const cleanCopy = { ...r };
+          delete cleanCopy._docId;
+          return {
+            update: {
+              name: `projects/${projectId}/databases/(default)/documents/${marts}/fct_${idx + 1}`,
+              ...toFirestoreFields(cleanCopy)
+            }
+          };
+        });
+        await firestoreBatchWrite(projectId, apiKey, martWrites);
+        await clearCollection(projectId, apiKey, sandboxCol);
+        await firestoreBatchWrite(projectId, apiKey, [{
+          update: {
+            name: `projects/${projectId}/databases/(default)/documents/_pipeline/status`,
+            ...toFirestoreFields({
+              pr_number: prNum,
+              status: 'OK',
+              failed_tests: 0,
+              promoted_rows: rows.length,
+              updated_at: new Date().toISOString(),
+              message: `PR #${prNum} berhasil di-merge ke ${marts}.`
+            })
+          }
+        }]);
+        logEl.textContent += `\n[4/4] Sandbox dibersihkan dan '_pipeline/status' diperbarui menjadi 'OK'.\n[HASIL AKHIR] PR #${prNum} -> MERGED & PROMOTED KE '${marts}'.`;
+      }
+    } catch (err) {
+      logEl.textContent += `\n[ERROR CI/CD] ${err.message}`;
+    }
+  }
+
+  async function checkCeoDashboard() {
+    const box = document.getElementById('ceoDashboardBox');
+    box.style.display = 'block';
+    try {
+      const { projectId, apiKey, marts } = getCfg();
+      const pipeDocs = await firestoreListDocs(projectId, apiKey, '_pipeline');
+      const statusDoc = pipeDocs.find(d => d._docId === 'status');
+
+      if (!statusDoc || statusDoc.status === 'BLOCKED') {
+        box.style.borderColor = '#e53e3e';
+        box.style.background = '#fff5f5';
+        box.innerHTML = `
+          <h4 style="margin:0 0 6px; color:#c53030;">⚠️ CIRCUIT BREAKER AKTIF: DASHBOARD DALAM MODE MAINTENANCE</h4>
+          <p style="margin:0; font-size:14px;">Pipeline mendeteksi kegagalan kualitas data pada PR terakhir (Status: <strong>${statusDoc ? statusDoc.status : 'UNKNOWN'}</strong> - ${statusDoc ? statusDoc.message : ''}). Angka pendapatan disembunyikan untuk mencegah keputusan eksekutif yang keliru.</p>
+        `;
+      } else {
+        const martRows = await firestoreListDocs(projectId, apiKey, marts);
+        const totalNet = martRows.reduce((sum, r) => sum + ((Number(r.amount) || 0) - (Number(r.discount) || 0)), 0);
+        box.style.borderColor = '#2f855a';
+        box.style.background = '#f0fff4';
+        box.innerHTML = `
+          <h4 style="margin:0 0 6px; color:#22543d;">✅ DASHBOARD EKSEKUTIF REKTORAT (SUMBER: <code>${marts}</code> &bull; STATUS: OK)</h4>
+          <p style="margin:0; font-size:15px;">Total Transaksi Terverifikasi: <strong>${martRows.length} Transaksi</strong> | Total Pendapatan Bersih: <strong>Rp ${totalNet.toLocaleString('id-ID')}</strong> (PR #${statusDoc.pr_number})</p>
+        `;
+      }
+    } catch (err) {
+      box.innerHTML = `<span style="color:red;">Gagal memuat status dashboard: ${err.message}</span>`;
+    }
+  }
+
+  // TAB 4: OBSERVABILITY (5 PILAR)
+  async function runObservabilitySnapshot() {
+    const tbody = document.getElementById('obsResultBody');
+    try {
+      const { projectId, apiKey, stg, marts } = getCfg();
+      tbody.innerHTML = `<tr><td colspan="5">Memindai 5 pilar observability pada '${stg}'...</td></tr>`;
+      const rows = await firestoreListDocs(projectId, apiKey, stg);
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5">Koleksi '${stg}' kosong. Bangkitkan data di tab Setup terlebih dahulu.</td></tr>`;
+        return;
+      }
+
+      // 1. Freshness (SLA <= 12 jam)
+      const latestMs = Math.max(...rows.map(r => new Date(r.created_at || 0).getTime()));
+      const ageHours = ((Date.now() - latestMs) / (1000 * 3600)).toFixed(1);
+      const freshOk = Number(ageHours) <= 12;
+
+      // 2. Volume
+      const rowCount = rows.length;
+      if (!baselineObs) baselineObs = { rowCount, avgAmount: 250000 };
+      const volDiffPct = Math.abs(rowCount - baselineObs.rowCount) / (baselineObs.rowCount || 1) * 100;
+      const volOk = volDiffPct <= 25; // Toleransi perubahan volume 25%
+
+      // 3. Distribution (Rata-rata amount)
+      const avgAmount = Math.round(rows.reduce((s, r) => s + (Number(r.amount) || 0), 0) / rowCount);
+      const distOk = avgAmount <= 1000000; // Lonjakan ekstrem jika > 1 juta
+
+      // 4. Schema (Expected columns: order_id, customer_id, amount, discount, status, created_at)
+      const expectedCols = new Set(['order_id', 'customer_id', 'amount', 'discount', 'status', 'created_at', '_docId']);
+      const extraCols = new Set();
+      rows.forEach(r => Object.keys(r).forEach(k => { if (!expectedCols.has(k)) extraCols.add(k); }));
+      const schemaOk = extraCols.size === 0;
+
+      // 5. Lineage
+      const hasAlert = !(freshOk && volOk && distOk && schemaOk);
+      const lineageText = hasAlert
+        ? `ALERT HULU: Berpotensi mencemari '${marts}' & Dashboard Eksekutif Rektorat`
+        : `SEHAT: Aliran '${stg}' -> '${marts}' -> Dashboard Rektorat aman`;
+
+      const snapId = 'snap_' + Date.now();
+      await firestoreBatchWrite(projectId, apiKey, [{
+        update: {
+          name: `projects/${projectId}/databases/(default)/documents/_obs_runs/${snapId}`,
+          ...toFirestoreFields({
+            snapshot_id: snapId,
+            run_at: new Date().toISOString(),
+            row_count: rowCount,
+            freshness_hours: Number(ageHours),
+            avg_amount: avgAmount,
+            extra_columns: Array.from(extraCols).join(',') || 'none',
+            freshness_status: freshOk ? 'SEHAT' : 'ALERT',
+            volume_status: volOk ? 'SEHAT' : 'ALERT',
+            distribution_status: distOk ? 'SEHAT' : 'ALERT',
+            schema_status: schemaOk ? 'SEHAT' : 'ALERT'
+          })
+        }
+      }]);
+
+      const pillars = [
+        {
+          pilar: '1. Freshness',
+          metric: 'Selisih waktu created_at terbaru (SLA Maks 12 Jam)',
+          val: `${ageHours} jam yang lalu`,
+          ok: freshOk,
+          note: freshOk ? 'Data tepat waktu sesuai SLA' : 'ALERT: Data basi melewati SLA 12 jam!'
+        },
+        {
+          pilar: '2. Volume',
+          metric: 'Total dokumen di stg_orders (Toleransi ±25% dari baseline)',
+          val: `${rowCount} dokumen`,
+          ok: volOk,
+          note: 'Volume total berada dalam rentang normal (duplikat kecil tidak memicu lonjakan volume)'
+        },
+        {
+          pilar: '3. Distribution',
+          metric: 'Rata-rata nilai amount transaksi',
+          val: `Rp ${avgAmount.toLocaleString('id-ID')}`,
+          ok: distOk,
+          note: distOk ? 'Distribusi nilai transaksi normal' : 'ALERT: Rata-rata melonjak ekstrem akibat pencilan 99.999.999!'
+        },
+        {
+          pilar: '4. Schema',
+          metric: 'Deteksi perubahan struktur / kolom baru',
+          val: schemaOk ? '6 kolom standar' : `Kolom liar: ${Array.from(extraCols).join(', ')}`,
+          ok: schemaOk,
+          note: schemaOk ? 'Skema sesuai kontrak data' : 'ALERT: Terdeteksi schema drift (kolom tak dikenal)!'
+        },
+        {
+          pilar: '5. Lineage',
+          metric: 'Analisis dampak hilir (Downstream Impact)',
+          val: `${stg} -> ${marts} -> Dashboard`,
+          ok: !hasAlert,
+          note: lineageText
+        }
+      ];
+
+      tbody.innerHTML = pillars.map(p => `
+        <tr>
+          <td><strong>${p.pilar}</strong></td>
+          <td>${p.metric}</td>
+          <td><code>${p.val}</code></td>
+          <td><span class="pill ${p.ok ? 'pill-pass' : 'pill-fail'}">${p.ok ? 'SEHAT' : 'ALERT'}</span></td>
+          <td>${p.note}</td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="5" style="color:red;">Error: ${err.message}</td></tr>`;
+    }
+  }
+
+  // TAB 5: DATA CATALOG
+  async function generateDataCatalog() {
+    const tbody = document.getElementById('catalogResultBody');
+    try {
+      const { projectId, apiKey, stg } = getCfg();
+      const getBadge = (colName) => {
+        if (!lastTestResults) return { label: 'BELUM DIUJI', cls: 'pill-warn' };
+        const related = lastTestResults.filter(t => t.col.includes(colName));
+        if (related.length === 0) return { label: 'TANPA TEST', cls: 'pill-warn' };
+        const failed = related.some(t => t.violators.length > 0);
+        return failed ? { label: 'GAGAL', cls: 'pill-fail' } : { label: 'LULUS', cls: 'pill-pass' };
+      };
+
+      const catalogColumns = [
+        { col: 'order_id', type: 'string', desc: 'ID unik transaksi pembayaran mahasiswa / koperasi', tests: 'unique(order_id)' },
+        { col: 'customer_id', type: 'string', desc: 'Foreign Key ke master dim_customers (Mahasiswa/Unit)', tests: 'not_null, relationships' },
+        { col: 'amount', type: 'number', desc: 'Nominal tagihan kotor sebelum potongan (Rp)', tests: 'range, zscore, discount_lte_amount' },
+        { col: 'discount', type: 'number', desc: 'Nominal potongan beasiswa / voucher koperasi (Rp)', tests: 'discount_lte_amount, custom_js' },
+        { col: 'status', type: 'string', desc: 'Status penyelesaian pembayaran transaksi', tests: 'accepted_values' },
+        { col: 'created_at', type: 'string (ISO)', desc: 'Waktu pencatatan transaksi dari payment gateway', tests: '-' }
+      ];
+
+      const writes = catalogColumns.map(c => {
+        const badge = getBadge(c.col);
+        return {
+          update: {
+            name: `projects/${projectId}/databases/(default)/documents/_catalog/${c.col}`,
+            ...toFirestoreFields({
+              collection: stg,
+              column_name: c.col,
+              data_type: c.type,
+              description: c.desc,
+              attached_tests: c.tests,
+              quality_badge: c.col === 'created_at' ? 'TANPA TEST' : badge.label,
+              updated_at: new Date().toISOString()
+            })
+          }
+        };
+      });
+
+      await firestoreBatchWrite(projectId, apiKey, writes);
+
+      tbody.innerHTML = catalogColumns.map(c => {
+        const badge = c.col === 'created_at' ? { label: 'TANPA TEST', cls: 'pill-warn' } : getBadge(c.col);
+        return `
+          <tr>
+            <td><code>${stg}</code></td>
+            <td><strong><code>${c.col}</code></strong></td>
+            <td>${c.type}</td>
+            <td>${c.desc}</td>
+            <td><code>${c.tests}</code></td>
+            <td><span class="pill ${badge.cls}">${badge.label}</span></td>
+          </tr>
+        `;
+      }).join('');
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error: ${err.message}</td></tr>`;
+    }
+  }
+</script>
+</body>
+</html>
